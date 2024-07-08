@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kraken.Desktop", "Kraken.Desktop\Kraken.Desktop.csproj", "{B0B385B7-7445-41E7-92E9-5405A5F91C1B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kraken.Desktop", "src\Kraken.Desktop\Kraken.Desktop.csproj", "{B0B385B7-7445-41E7-92E9-5405A5F91C1B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
