@@ -1,4 +1,5 @@
-﻿using Kraken.Desktop.Views;
+﻿using System.Windows;
+using Kraken.Desktop.Views;
 using ModernWpf.Controls;
 
 namespace Kraken.Desktop;
@@ -8,12 +9,22 @@ public partial class MainWindow
     public MainWindow()
     {
         InitializeComponent();
-        RootFrame.Navigate(typeof(CoolingPage));
     }
 
-
-    private void NavigationView_OnSelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
+    private void MainWindow_OnLoaded(object sender, RoutedEventArgs e)
     {
-        RootFrame.Navigate(typeof(CoolingPage));
+        var navigated = RootFrame.Navigate(typeof(CoolingPage));
+        if (navigated)
+        {
+            var navViewItem = RootNavigationView.MenuItems.OfType<NavigationViewItem>().First();
+            RootNavigationView.SelectedItem = navViewItem;
+        }
+    }
+
+    private void RootNavigationView_OnSelectionChanged(NavigationView sender,
+        NavigationViewSelectionChangedEventArgs args)
+    {
+        if (args.SelectedItemContainer.Tag is not string tag) return;
+        RootFrame.Navigate(Type.GetType(tag));
     }
 }

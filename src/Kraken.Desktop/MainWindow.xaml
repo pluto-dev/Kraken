@@ -1,5 +1,6 @@
 ﻿<Window
     Height="450"
+    Loaded="MainWindow_OnLoaded"
     Title="MainWindow"
     Width="800"
     mc:Ignorable="d"
@@ -12,13 +13,16 @@
     xmlns:ui="http://schemas.modernwpf.com/2019"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <ui:NavigationView
+        IsBackButtonVisible="Collapsed"
+        IsBackEnabled="False"
+        IsSettingsVisible="False"
         IsTabStop="False"
         PaneDisplayMode="Top"
-        SelectionChanged="NavigationView_OnSelectionChanged"
-        x:Name="NavigationView">
+        SelectionChanged="RootNavigationView_OnSelectionChanged"
+        x:Name="RootNavigationView">
         <ui:NavigationView.MenuItems>
-            <ui:NavigationViewItem Content="Cooling" Tag="CoolingPage" />
-            <ui:NavigationViewItem Content="Lighting" Tag="LightingPage" />
+            <ui:NavigationViewItem Content="Cooling" Tag="Kraken.Desktop.Views.CoolingPage" />
+            <ui:NavigationViewItem Content="Lighting" Tag="Kraken.Desktop.Views.LightingPage" />
         </ui:NavigationView.MenuItems>
         <ui:Frame x:Name="RootFrame" />
     </ui:NavigationView>
