@@ -1,3 +1,5 @@
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -9,8 +11,22 @@ using ScottPlot.Plottables;
 
 namespace Kraken.Desktop.Views;
 
-public partial class CoolingPage : Page
+public partial class CoolingPage : Page, INotifyPropertyChanged
 {
+    public event PropertyChangedEventHandler? PropertyChanged;
+
+    private string _rpm = string.Empty;
+
+    public string Rpm
+    {
+        get => _rpm;
+        set
+        {
+            _rpm = value;
+            OnPropertyChanged();
+        }
+    }
+
     private readonly Text _markerLabel;
     private readonly Scatter _pumpDutyScatter;
     private readonly VerticalLine _temperatureLine;
@@ -20,6 +36,7 @@ public partial class CoolingPage : Page
     private readonly int[] _ys = [50, 50, 50, 50, 50, 50, 50, 50, 100, 100, 100, 100, 100, 100, 100, 100, 100];
 
     private readonly RandomWalker _walker = new(1, 30);
+    private readonly RandomWalker _walker2 = new(2, 1260);
 
     private readonly DispatcherTimer _dispatcherTimer = new()
         { Interval = TimeSpan.FromMilliseconds(100), IsEnabled = true };
@@ -38,6 +55,7 @@ public partial class CoolingPage : Page
     public CoolingPage()
     {
         InitializeComponent();
+        DataContext = this;
         _temperatureLine = CoolingPlot.Plot.Add.VerticalLine(x: 0);
         _pumpDutyScatter = CoolingPlot.Plot.Add.Scatter(_xs, _ys);
         _markerLabel = CoolingPlot.Plot.Add.Text("", 0, 0);
@@ -99,9 +117,10 @@ public partial class CoolingPage : Page
     {
         var tempSource = "Liquid";
         double? status = _walker.Next();
+        double? rpm = _walker2.Next();
         if (status is null) return;
         _temperatureLine.IsVisible = true;
-        
+
         var color = status switch
         {
             < 35.0 => _green,
@@ -114,6 +133,7 @@ public partial class CoolingPage : Page
         _temperatureLine.LabelFontColor = color;
         _temperatureLine.Position = status.Value;
         _temperatureLine.LabelText = $"{tempSource}: {status.Value:N0}˚";
+        Rpm = $"Pump RPM: {rpm:N0}";
         CoolingPlot.Refresh();
     }
 
@@ -173,5 +193,10 @@ public partial class CoolingPage : Page
         var mouseLocation = CoolingPlot.Plot.GetCoordinates(mousePixel);
         var nearest = _pumpDutyScatter.Data.GetNearest(mouseLocation, CoolingPlot.Plot.LastRender);
         _indexBeingDragged = nearest.IsReal ? nearest.Index : null;
+    }
+
+    protected void OnPropertyChanged([CallerMemberName] string? name = null)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
     }
 }
