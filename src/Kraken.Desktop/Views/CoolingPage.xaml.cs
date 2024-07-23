@@ -4,9 +4,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
+using Kraken.Desktop.Services;
 using ScottPlot;
-using ScottPlot.DataGenerators;
-using ScottPlot.Palettes;
 using ScottPlot.Plottables;
 
 namespace Kraken.Desktop.Views;
@@ -20,7 +19,7 @@ public partial class CoolingPage : Page, INotifyPropertyChanged
     public string Rpm
     {
         get => _rpm;
-        set
+        private set
         {
             _rpm = value;
             OnPropertyChanged();
@@ -30,16 +29,15 @@ public partial class CoolingPage : Page, INotifyPropertyChanged
     private readonly Text _markerLabel;
     private readonly Scatter _pumpDutyScatter;
     private readonly VerticalLine _temperatureLine;
+    private readonly KrakenService _krakenService;
+    private KrakenDevice? _krakenDevice;
 
     private int? _indexBeingDragged;
     private readonly int[] _xs = [20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100];
     private readonly int[] _ys = [50, 50, 50, 50, 50, 50, 50, 50, 100, 100, 100, 100, 100, 100, 100, 100, 100];
 
-    private readonly RandomWalker _walker = new(1, 30);
-    private readonly RandomWalker _walker2 = new(2, 1260);
-
     private readonly DispatcherTimer _dispatcherTimer = new()
-        { Interval = TimeSpan.FromMilliseconds(100), IsEnabled = true };
+        { Interval = TimeSpan.FromMilliseconds(1000), IsEnabled = true };
 
     private readonly Color _gray = Color.FromHex("#404040");
     private readonly Color _white = Color.FromHex("#e5e9f0");
@@ -56,6 +54,7 @@ public partial class CoolingPage : Page, INotifyPropertyChanged
     {
         InitializeComponent();
         DataContext = this;
+        _krakenService = new KrakenService();
         _temperatureLine = CoolingPlot.Plot.Add.VerticalLine(x: 0);
         _pumpDutyScatter = CoolingPlot.Plot.Add.Scatter(_xs, _ys);
         _markerLabel = CoolingPlot.Plot.Add.Text("", 0, 0);
@@ -105,8 +104,12 @@ public partial class CoolingPage : Page, INotifyPropertyChanged
         CoolingPlot.Plot.Grid.MajorLineColor = _gray;
     }
 
-    private void CoolingPage_OnLoaded(object sender, RoutedEventArgs e)
+    private async void CoolingPage_OnLoaded(object sender, RoutedEventArgs e)
     {
+        var krakenDevices = await _krakenService.GetDevices();
+        _krakenDevice = krakenDevices?.FirstOrDefault(x => x is { ProductId: 8199, VendorId: 7793 });
+        _ = await _krakenService.InitializeKraken(_krakenDevice?.Id);
+
         CoolingPlot.MouseDown += CoolingPlotOnMouseDown;
         CoolingPlot.MouseMove += CoolingPlotOnMouseMove;
         CoolingPlot.MouseUp += CoolingPlotOnMouseUp;
@@ -115,13 +118,10 @@ public partial class CoolingPage : Page, INotifyPropertyChanged
 
     private async void DispatcherTimerOnTick(object? sender, EventArgs args)
     {
-        var tempSource = "Liquid";
-        double? status = _walker.Next();
-        double? rpm = _walker2.Next();
+        var status = await _krakenService.GetKrakenStatus(_krakenDevice?.Id);
         if (status is null) return;
-        _temperatureLine.IsVisible = true;
 
-        var color = status switch
+        var color = status.Temp.Value switch
         {
             < 35.0 => _green,
             < 50.0 => _orange,
@@ -129,11 +129,12 @@ public partial class CoolingPage : Page, INotifyPropertyChanged
             _ => throw new ArgumentOutOfRangeException()
         };
 
+        _temperatureLine.IsVisible = true;
         _temperatureLine.LineColor = color;
         _temperatureLine.LabelFontColor = color;
-        _temperatureLine.Position = status.Value;
-        _temperatureLine.LabelText = $"{tempSource}: {status.Value:N0}˚";
-        Rpm = $"Pump RPM: {rpm:N0}";
+        _temperatureLine.Position = status.Temp.Value;
+        _temperatureLine.LabelText = $"Liquid Temp.: {status.Temp.Value}˚";
+        Rpm = $"Pump RPM: {status.Speed.Value}";
         CoolingPlot.Refresh();
     }
 
@@ -195,7 +196,7 @@ public partial class CoolingPage : Page, INotifyPropertyChanged
         _indexBeingDragged = nearest.IsReal ? nearest.Index : null;
     }
 
-    protected void OnPropertyChanged([CallerMemberName] string? name = null)
+    private void OnPropertyChanged([CallerMemberName] string? name = null)
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
     }
