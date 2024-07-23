@@ -2,9 +2,9 @@ using System.Windows.Controls;
 
 namespace Kraken.Desktop.Views;
 
-public partial class Lighting : Page
+public partial class LightingPage : Page
 {
-    public Lighting()
+    public LightingPage()
     {
         InitializeComponent();
     }
