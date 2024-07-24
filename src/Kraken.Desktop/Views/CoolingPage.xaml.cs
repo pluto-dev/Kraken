@@ -138,9 +138,10 @@ public partial class CoolingPage : Page, INotifyPropertyChanged
         CoolingPlot.Refresh();
     }
 
-    private void CoolingPlotOnMouseUp(object sender, MouseButtonEventArgs e)
+    private async void CoolingPlotOnMouseUp(object sender, MouseButtonEventArgs e)
     {
         _indexBeingDragged = null;
+        await _krakenService.SetSpeedProfile(_krakenDevice?.Id, "pump", _xs.Zip(_ys).ToList());
         CoolingPlot.Refresh();
     }
 

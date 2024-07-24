@@ -2,6 +2,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Net.Http;
 using System.Net.Sockets;
+using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -77,6 +78,22 @@ public class KrakenService
         return status;
     }
 
+    public async Task SetSpeedProfile(int? id, string channel, List<(int X, int Y)> profile)
+    {
+        Debug.Assert(id is not null, "Id can't be null");
+        using var json = new StringContent(JsonSerializer.Serialize(new
+        {
+            channel = channel,
+            profile = profile
+        }, options: new() { Converters = { new SpeedProfileConverter() } }), Encoding.UTF8, "application/json");
+
+        using var response = await _http.PostAsync($"devices/{id}/speed", json);
+        response.EnsureSuccessStatusCode();
+
+        // TODO deserialize content
+        var content = await response.Content.ReadAsStringAsync();
+    }
+
     public async Task<KrakenStatus?> GetKrakenStatus(int? id)
     {
         Debug.Assert(id is not null, "Id can't be null");
@@ -136,6 +153,22 @@ public class KrakenService
         }
 
         return null;
+    }
+}
+
+public class SpeedProfileConverter : JsonConverter<ValueTuple<int, int>>
+{
+    public override (int, int) Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    {
+        throw new NotImplementedException();
+    }
+
+    public override void Write(Utf8JsonWriter writer, (int, int) value, JsonSerializerOptions options)
+    {
+        writer.WriteStartArray();
+        writer.WriteNumberValue(value.Item1);
+        writer.WriteNumberValue(value.Item2);
+        writer.WriteEndArray();
     }
 }
 
