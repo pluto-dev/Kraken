@@ -1,12 +1,27 @@
-﻿using System.Configuration;
-using System.Data;
-using System.Windows;
+﻿using System;
+using Kraken.Desktop.Views;
+using Microsoft.UI.Xaml;
+using WinUIEx;
 
 namespace Kraken.Desktop;
 
-/// <summary>
-/// Interaction logic for App.xaml
-/// </summary>
 public partial class App : Application
 {
+    public App()
+    {
+        InitializeComponent();
+    }
+
+    protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
+    {
+        if (MainWindow.Content is not null)
+        {
+            throw new InvalidOperationException($"Content of {nameof(MainWindow)} must be null.");
+        }
+
+        MainWindow.Content = new ShellPage();
+        MainWindow.Activate();
+    }
+
+    public static WindowEx MainWindow { get; } = new MainWindow();
 }

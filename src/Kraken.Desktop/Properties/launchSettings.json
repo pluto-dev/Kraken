@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "Kraken.Desktop (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "Kraken.Desktop (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}
