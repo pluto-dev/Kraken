@@ -108,26 +108,9 @@ public class KrakenService : IDisposable
         return status;
     }
 
-    public async Task<KrakenStatus?> Disconnect()
+    public Task<object?> Disconnect()
     {
-        HttpResponseMessage? response = null;
-        try
-        {
-            response = await _http.GetAsync(DisconnectPath);
-        }
-        catch (HttpRequestException e) { }
-        catch (IOException e) { }
-        catch (SocketException e) { }
-
-        if (response is not null)
-        {
-            var content = await response.Content.ReadAsStringAsync();
-            var status = JsonSerializer.Deserialize<KrakenStatus>(content);
-
-            return status;
-        }
-
-        return null;
+        throw new NotImplementedException();
     }
 
     public void Dispose()
