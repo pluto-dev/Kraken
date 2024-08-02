@@ -7,7 +7,6 @@
     xmlns:lvc="using:LiveChartsCore.SkiaSharpView.WinUI"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Loaded="CoolingPage_OnLoaded"
-    Loading="CoolingPage_OnLoading"
     mc:Ignorable="d">
 
     <Grid

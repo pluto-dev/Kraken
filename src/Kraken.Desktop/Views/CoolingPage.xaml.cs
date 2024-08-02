@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 using Kraken.Desktop.Services;
 using LiveChartsCore;
 using LiveChartsCore.Defaults;
@@ -170,9 +171,23 @@ public sealed partial class CoolingPage : Page
         _currentChartPoint = point;
     }
 
-    private void Chart_OnPointerReleased(object sender, PointerRoutedEventArgs e)
+    private async void Chart_OnPointerReleased(object sender, PointerRoutedEventArgs e)
+    {
+        await SetPump();
+    }
+
+    private async Task SetPump()
     {
         _currentChartPoint = null;
+        var pump = nameof(_krakenDevice.SpeedChannels.Pump).ToLower();
+        var values = _lineSeries.Values?.Select(value =>
+        {
+            Debug.Assert(value.X is not null, "value.X in values in line series can't be null");
+            Debug.Assert(value.Y is not null, "value.Y in values in line series can't be null");
+            return ((int)value.X, (int)value.Y);
+        });
+        Debug.Assert(values is not null, "the values in line series can't be null");
+        await _krakenService.SetSpeedProfile(_krakenDevice?.Id, pump, values);
     }
 
     private void Chart_OnPointerMoved(object sender, PointerRoutedEventArgs e)
@@ -212,14 +227,15 @@ public sealed partial class CoolingPage : Page
         Chart.CoreChart.Update();
     }
 
-    private void Chart_OnPointerExited(object sender, PointerRoutedEventArgs e)
+    private async void Chart_OnPointerExited(object sender, PointerRoutedEventArgs e)
     {
-        _currentChartPoint = null;
+        if (_currentChartPoint is not null)
+        {
+            await SetPump();
+        }
     }
 
-    private async void CoolingPage_OnLoaded(object sender, RoutedEventArgs e) { }
-
-    private async void CoolingPage_OnLoading(FrameworkElement sender, object args)
+    private async void CoolingPage_OnLoaded(object sender, RoutedEventArgs e)
     {
         var krakenDevices = await _krakenService.GetDevices();
         _krakenDevice = krakenDevices?.FirstOrDefault(x =>
