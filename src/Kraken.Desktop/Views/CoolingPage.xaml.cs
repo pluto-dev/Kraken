@@ -243,4 +243,11 @@ public sealed partial class CoolingPage : Page
         );
         _ = await _krakenService.InitializeKraken(_krakenDevice?.Id);
     }
+
+    private void CoolingPage_OnUnloaded(object sender, RoutedEventArgs e)
+    {
+        _timer.Stop();
+        _timer.Tick -= TimerOnTick;
+        _krakenService.Dispose();
+    }
 }

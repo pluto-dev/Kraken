@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Kraken.Desktop.Services;
 
-public class KrakenService
+public class KrakenService : IDisposable
 {
     private readonly HttpClient _http = new();
     private const string DisconnectPath = "devices/kraken/disconnect";
@@ -128,6 +128,11 @@ public class KrakenService
         }
 
         return null;
+    }
+
+    public void Dispose()
+    {
+        _http.Dispose();
     }
 }
 
