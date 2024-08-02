@@ -65,7 +65,7 @@ public class KrakenService
         return status;
     }
 
-    public async Task SetSpeedProfile(int? id, string channel, List<(int X, int Y)> profile)
+    public async Task SetSpeedProfile(int? id, string channel, IEnumerable<(int X, int Y)> profile)
     {
         Debug.Assert(id is not null, "Id can't be null");
         using var json = new StringContent(
@@ -77,6 +77,7 @@ public class KrakenService
             "application/json"
         );
 
+        //TODO try
         using var response = await _http.PostAsync($"devices/{id}/speed", json);
         response.EnsureSuccessStatusCode();
 
