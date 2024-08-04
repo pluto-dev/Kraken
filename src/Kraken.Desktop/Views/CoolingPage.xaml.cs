@@ -96,7 +96,7 @@ public sealed partial class CoolingPage : Page
     {
         InitializeComponent();
         DataContext = this;
-        _krakenService = new();
+        _krakenService = KrakenService.Instance;
         Series.Add(_lineSeries);
         Sections.Add(_liquidSection);
         Sections.Add(_rpmSection);
@@ -248,6 +248,5 @@ public sealed partial class CoolingPage : Page
     {
         _timer.Stop();
         _timer.Tick -= TimerOnTick;
-        _krakenService.Dispose();
     }
 }

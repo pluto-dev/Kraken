@@ -11,14 +11,15 @@ using System.Threading.Tasks;
 
 namespace Kraken.Desktop.Services;
 
-public class KrakenService : IDisposable
+public class KrakenService
 {
-    private readonly HttpClient _http = new();
-    private const string DisconnectPath = "devices/kraken/disconnect";
+    private static readonly HttpClient Http = new();
+    private static readonly Lazy<KrakenService> Lazy = new(() => new KrakenService());
+    public static KrakenService Instance => Lazy.Value;
 
-    public KrakenService()
+    private KrakenService()
     {
-        _http.BaseAddress = new Uri("http://127.0.0.1:5000");
+        Http.BaseAddress = new Uri("http://127.0.0.1:5000");
     }
 
     public async Task<List<KrakenDevice>?> GetDevices()
@@ -26,7 +27,7 @@ public class KrakenService : IDisposable
         HttpResponseMessage? response = null;
         try
         {
-            response = await _http.GetAsync("devices");
+            response = await Http.GetAsync("devices");
         }
         catch (HttpRequestException e) { }
         catch (IOException e) { }
@@ -37,7 +38,6 @@ public class KrakenService : IDisposable
 
         var content = await response.Content.ReadAsStringAsync();
         var status = JsonSerializer.Deserialize<List<KrakenDevice>>(content);
-
         return status;
     }
 
@@ -47,7 +47,7 @@ public class KrakenService : IDisposable
         HttpResponseMessage? response = null;
         try
         {
-            response = await _http.GetAsync($"devices/{id}/initialize");
+            response = await Http.GetAsync($"devices/{id}/initialize");
         }
         catch (HttpRequestException e) { }
         catch (IOException e) { }
@@ -78,7 +78,7 @@ public class KrakenService : IDisposable
         );
 
         //TODO try
-        using var response = await _http.PostAsync($"devices/{id}/speed", json);
+        using var response = await Http.PostAsync($"devices/{id}/speed", json);
         response.EnsureSuccessStatusCode();
 
         // TODO deserialize content
@@ -91,7 +91,7 @@ public class KrakenService : IDisposable
         HttpResponseMessage? response = null;
         try
         {
-            response = await _http.GetAsync($"devices/{id}/status");
+            response = await Http.GetAsync($"devices/{id}/status");
         }
         catch (HttpRequestException e) { }
         catch (IOException e) { }
@@ -111,11 +111,6 @@ public class KrakenService : IDisposable
     public Task<object?> Disconnect()
     {
         throw new NotImplementedException();
-    }
-
-    public void Dispose()
-    {
-        _http.Dispose();
     }
 }
 
