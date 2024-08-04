@@ -218,81 +218,19 @@ public class KrakenInitConverter : JsonConverter<(string? Property, string? Valu
     }
 }
 
-public record ColorChannels(
-    [property: JsonPropertyName("external")] int? External,
-    [property: JsonPropertyName("logo")] int? Logo,
-    [property: JsonPropertyName("ring")] int? Ring,
-    [property: JsonPropertyName("sync")] int? Sync
-);
-
-public record ColorModes(
-    [property: JsonPropertyName("alternating-3")] IReadOnlyList<int?> Alternating3,
-    [property: JsonPropertyName("alternating-4")] IReadOnlyList<int?> Alternating4,
-    [property: JsonPropertyName("alternating-5")] IReadOnlyList<int?> Alternating5,
-    [property: JsonPropertyName("alternating-6")] IReadOnlyList<int?> Alternating6,
-    [property: JsonPropertyName("backwards-marquee-3")] IReadOnlyList<int?> BackwardsMarquee3,
-    [property: JsonPropertyName("backwards-marquee-4")] IReadOnlyList<int?> BackwardsMarquee4,
-    [property: JsonPropertyName("backwards-marquee-5")] IReadOnlyList<int?> BackwardsMarquee5,
-    [property: JsonPropertyName("backwards-marquee-6")] IReadOnlyList<int?> BackwardsMarquee6,
-    [property: JsonPropertyName("backwards-moving-alternating-3")]
-        IReadOnlyList<int?> BackwardsMovingAlternating3,
-    [property: JsonPropertyName("backwards-moving-alternating-4")]
-        IReadOnlyList<int?> BackwardsMovingAlternating4,
-    [property: JsonPropertyName("backwards-moving-alternating-5")]
-        IReadOnlyList<int?> BackwardsMovingAlternating5,
-    [property: JsonPropertyName("backwards-moving-alternating-6")]
-        IReadOnlyList<int?> BackwardsMovingAlternating6,
-    [property: JsonPropertyName("backwards-rainbow-flow")] IReadOnlyList<int?> BackwardsRainbowFlow,
-    [property: JsonPropertyName("backwards-rainbow-pulse")]
-        IReadOnlyList<int?> BackwardsRainbowPulse,
-    [property: JsonPropertyName("backwards-spectrum-wave")]
-        IReadOnlyList<int?> BackwardsSpectrumWave,
-    [property: JsonPropertyName("backwards-super-rainbow")]
-        IReadOnlyList<int?> BackwardsSuperRainbow,
-    [property: JsonPropertyName("breathing")] IReadOnlyList<int?> Breathing,
-    [property: JsonPropertyName("candle")] IReadOnlyList<int?> Candle,
-    [property: JsonPropertyName("covering-backwards-marquee")]
-        IReadOnlyList<int?> CoveringBackwardsMarquee,
-    [property: JsonPropertyName("covering-marquee")] IReadOnlyList<int?> CoveringMarquee,
-    [property: JsonPropertyName("fading")] IReadOnlyList<int?> Fading,
-    [property: JsonPropertyName("fixed")] IReadOnlyList<int?> Fixed,
-    [property: JsonPropertyName("loading")] IReadOnlyList<int?> Loading,
-    [property: JsonPropertyName("marquee-3")] IReadOnlyList<int?> Marquee3,
-    [property: JsonPropertyName("marquee-4")] IReadOnlyList<int?> Marquee4,
-    [property: JsonPropertyName("marquee-5")] IReadOnlyList<int?> Marquee5,
-    [property: JsonPropertyName("marquee-6")] IReadOnlyList<int?> Marquee6,
-    [property: JsonPropertyName("moving-alternating-3")] IReadOnlyList<int?> MovingAlternating3,
-    [property: JsonPropertyName("moving-alternating-4")] IReadOnlyList<int?> MovingAlternating4,
-    [property: JsonPropertyName("moving-alternating-5")] IReadOnlyList<int?> MovingAlternating5,
-    [property: JsonPropertyName("moving-alternating-6")] IReadOnlyList<int?> MovingAlternating6,
-    [property: JsonPropertyName("off")] IReadOnlyList<int?> Off,
-    [property: JsonPropertyName("pulse")] IReadOnlyList<int?> Pulse,
-    [property: JsonPropertyName("rainbow-flow")] IReadOnlyList<int?> RainbowFlow,
-    [property: JsonPropertyName("rainbow-pulse")] IReadOnlyList<int?> RainbowPulse,
-    [property: JsonPropertyName("spectrum-wave")] IReadOnlyList<int?> SpectrumWave,
-    [property: JsonPropertyName("starry-night")] IReadOnlyList<int?> StarryNight,
-    [property: JsonPropertyName("super-breathing")] IReadOnlyList<int?> SuperBreathing,
-    [property: JsonPropertyName("super-fixed")] IReadOnlyList<int?> SuperFixed,
-    [property: JsonPropertyName("super-rainbow")] IReadOnlyList<int?> SuperRainbow,
-    [property: JsonPropertyName("tai-chi")] IReadOnlyList<int?> TaiChi,
-    [property: JsonPropertyName("water-cooler")] IReadOnlyList<int?> WaterCooler,
-    [property: JsonPropertyName("wings")] IReadOnlyList<int?> Wings
-);
-
 public record KrakenDevice(
     [property: JsonPropertyName("address")] string Address,
-    [property: JsonPropertyName("animation_speeds")] IReadOnlyList<string> AnimationSpeeds,
+    [property: JsonPropertyName("animation_speeds")] Dictionary<string, int?> AnimationSpeeds,
     [property: JsonPropertyName("bus")] string Bus,
-    [property: JsonPropertyName("color_channels")] ColorChannels ColorChannels,
-    [property: JsonPropertyName("color_modes")] ColorModes ColorModes,
+    [property: JsonPropertyName("color_channels")] Dictionary<string, int?> ColorChannels,
+    [property: JsonPropertyName("color_modes")] Dictionary<string, IReadOnlyList<int?>> ColorModes,
     [property: JsonPropertyName("description")] string Description,
     [property: JsonPropertyName("id")] int? Id,
     [property: JsonPropertyName("port")] int? Port,
     [property: JsonPropertyName("product_id")] int? ProductId,
     [property: JsonPropertyName("release_number")] int? ReleaseNumber,
     [property: JsonPropertyName("serial_number")] string SerialNumber,
-    [property: JsonPropertyName("speed_channels")] SpeedChannels SpeedChannels,
+    [property: JsonPropertyName("speed_channels")]
+        Dictionary<string, IReadOnlyList<int?>> SpeedChannels,
     [property: JsonPropertyName("vendor_id")] int? VendorId
 );
-
-public record SpeedChannels([property: JsonPropertyName("pump")] IReadOnlyList<int?> Pump);
