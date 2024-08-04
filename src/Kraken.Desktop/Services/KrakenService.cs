@@ -15,6 +15,7 @@ public class KrakenService
 {
     private static readonly HttpClient Http = new();
     private static readonly Lazy<KrakenService> Lazy = new(() => new KrakenService());
+    private List<KrakenDevice>? _devices;
     public static KrakenService Instance => Lazy.Value;
 
     private KrakenService()
@@ -24,6 +25,9 @@ public class KrakenService
 
     public async Task<List<KrakenDevice>?> GetDevices()
     {
+        if (_devices is not null)
+            return _devices;
+
         HttpResponseMessage? response = null;
         try
         {
@@ -37,8 +41,8 @@ public class KrakenService
             return null;
 
         var content = await response.Content.ReadAsStringAsync();
-        var status = JsonSerializer.Deserialize<List<KrakenDevice>>(content);
-        return status;
+        _devices = JsonSerializer.Deserialize<List<KrakenDevice>>(content);
+        return _devices;
     }
 
     public async Task<KrakenInitStatus?> InitializeKraken(int? id)
