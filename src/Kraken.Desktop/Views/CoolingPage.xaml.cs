@@ -102,7 +102,6 @@ public sealed partial class CoolingPage : Page
         Sections.Add(_rpmSection);
         _timer.Tick += TimerOnTick;
         _timer.Interval = TimeSpan.FromMilliseconds(1000);
-        _timer.Start();
     }
 
     #region properties
@@ -241,7 +240,10 @@ public sealed partial class CoolingPage : Page
         _krakenDevice = krakenDevices?.FirstOrDefault(x =>
             x is { ProductId: 8199, VendorId: 7793 }
         );
-        _ = await _krakenService.InitializeKraken(_krakenDevice?.Id);
+        var init = await _krakenService.InitializeKraken(_krakenDevice?.Id);
+        if (init is null)
+            return;
+        _timer.Start();
     }
 
     private void CoolingPage_OnUnloaded(object sender, RoutedEventArgs e)
