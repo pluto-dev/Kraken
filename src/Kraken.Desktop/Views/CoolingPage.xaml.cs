@@ -178,7 +178,8 @@ public sealed partial class CoolingPage : Page
     private async Task SetPump()
     {
         _currentChartPoint = null;
-        var pump = nameof(_krakenDevice.SpeedChannels.Pump).ToLower();
+        var pump = _krakenDevice?.SpeedChannels.Keys.FirstOrDefault(x => x.Contains("pump"));
+        Debug.Assert(pump is not null, "pump can't be null");
         var values = _lineSeries.Values?.Select(value =>
         {
             Debug.Assert(value.X is not null, "value.X in values in line series can't be null");
