@@ -8,6 +8,7 @@ using System.Globalization;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using Kraken.Desktop.Models;
 using Kraken.Desktop.Services;
 using Kraken.Desktop.Utils;
 using Kraken.Desktop.Views;
