@@ -50,8 +50,7 @@ public sealed partial class CustomColorPicker : UserControl
         if (e.ClickedItem is not SolidColorBrush color)
             return;
 
-        RecentColors.RemoveAt(0);
-        RecentColors.Add(color);
+        UpdateRecentColor(color);
 
         Click?.Invoke(sender, color);
     }
@@ -60,10 +59,24 @@ public sealed partial class CustomColorPicker : UserControl
     {
         var color = new SolidColorBrush(ColorPicker.Color);
 
-        RecentColors.RemoveAt(0);
-        RecentColors.Add(color);
+        UpdateRecentColor(color);
 
         Click?.Invoke(sender, color);
+    }
+
+    private void UpdateRecentColor(SolidColorBrush brush)
+    {
+        var index = RecentColors.ToList().FindIndex(p => p == brush);
+
+        if (index != -1)
+        {
+            RecentColors.Move(index, RecentColors.Count - 1);
+        }
+        else
+        {
+            RecentColors.RemoveAt(0);
+            RecentColors.Add(brush);
+        }
     }
 }
 
