@@ -72,6 +72,7 @@
                 Click="SelectColorButton_OnClick"
                 CommandParameter="{x:Bind ColorPicker.Color}"
                 Content="Select"
+                IsEnabled="{x:Bind IsColorSelectionEnabled, Mode=OneWay}"
                 Visibility="{x:Bind ToggleButton.IsChecked, Mode=OneWay}" />
 
             <ToggleButton
