@@ -15,6 +15,7 @@
   </PropertyGroup>
   <ItemGroup>
     <None Remove="Controls\CustomColorPicker.xaml" />
+    <None Remove="Controls\LedControl.xaml" />
     <None Remove="Views\CoolingPage.xaml" />
     <None Remove="Views\LightingPage.xaml" />
     <None Remove="Views\ShellPage.xaml" />
@@ -45,6 +46,11 @@
   -->
   <ItemGroup Condition="'$(DisableMsixProjectCapabilityAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
     <ProjectCapability Include="Msix" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Controls\LedControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Controls\CustomColorPicker.xaml">
