@@ -112,6 +112,44 @@ public class KrakenService
         return status;
     }
 
+    public async Task SetColor(
+        int? id,
+        string channel,
+        string mode,
+        List<List<byte>?>? colors,
+        string? speed,
+        string? direction
+    )
+    {
+        Debug.Assert(id is not null, "Id can't be null");
+
+        using var json = new StringContent(
+            JsonSerializer.Serialize(
+                new
+                {
+                    channel,
+                    mode,
+                    colors,
+                    speed,
+                    direction
+                },
+                options: new JsonSerializerOptions
+                {
+                    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+                }
+            ),
+            Encoding.UTF8,
+            "application/json"
+        );
+
+        //TODO try
+        using var response = await Http.PostAsync($"devices/{id}/color", json);
+        response.EnsureSuccessStatusCode();
+
+        // TODO deserialize content
+        var content = await response.Content.ReadAsStringAsync();
+    }
+
     public Task<object?> Disconnect()
     {
         throw new NotImplementedException();
