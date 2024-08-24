@@ -320,13 +320,13 @@ public sealed partial class LedControl : UserControl, INotifyPropertyChanged
         if (options is null)
             return;
 
-        // Delay for 1 sec because we don't want to spam the device
+        // Delay for 1 sec to avoid spamming the device
         await Task.Delay(TimeSpan.FromMilliseconds(1000));
 
         await _krakenService.SetColor(
             KrakenDevice.Id,
             ChannelName.ToLower(),
-            options.Mode,
+            options.Mode.ToLower(),
             options.Colors?.ToList(),
             options.AnimationSpeed?.ToLower(),
             options.Direction?.ToLower()
