@@ -376,9 +376,3 @@ public sealed partial class LedControl : UserControl, INotifyPropertyChanged
         UnregisterCollectionEvents();
     }
 }
-
-public class LedColor(SolidColorBrush color)
-{
-    public Guid Id { get; set; } = Guid.NewGuid();
-    public SolidColorBrush Color { get; set; } = color;
-}
