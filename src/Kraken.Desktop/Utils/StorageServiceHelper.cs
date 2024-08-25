@@ -56,7 +56,7 @@ public static class StorageServiceHelper
             () =>
                 FileService.Save(
                     storage.ApplicationDataFolder,
-                    StorageService.DefaultSettingsFile,
+                    StorageService.DefaultColorModesSettingsFile,
                     _colorModesSettings
                 )
         );
