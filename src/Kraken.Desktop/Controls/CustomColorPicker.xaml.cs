@@ -4,6 +4,9 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
+using Kraken.Desktop.Services;
+using Kraken.Desktop.Utils;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -18,11 +21,14 @@ namespace Kraken.Desktop.Controls;
 
 public sealed partial class CustomColorPicker : UserControl
 {
+    private readonly StorageService _storageService;
+
     //public event ItemClickEventHandler? Click;
     public event EventHandler<SolidColorBrush>? Click;
 
     public CustomColorPicker()
     {
+        _storageService = StorageService.Instance;
         InitializeComponent();
     }
 
@@ -78,6 +84,17 @@ public sealed partial class CustomColorPicker : UserControl
             RecentColors.RemoveAt(0);
             RecentColors.Add(brush);
         }
+
+        await SaveRecentColors();
+    }
+
+    private async Task SaveRecentColors()
+    {
+        var recentColors = RecentColors
+            .Select(p => new[] { p.Color.A, p.Color.R, p.Color.G, p.Color.B })
+            .ToArray();
+
+        await _storageService.SaveRecentColors(recentColors);
     }
 }
 
