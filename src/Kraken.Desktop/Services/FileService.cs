@@ -21,6 +21,7 @@ public class FileService
         };
     }
 
+    private readonly object _lock = new();
     private readonly JsonSerializerOptions _jsonDeserializerOptions;
     private readonly JsonSerializerOptions _jsonSerializerOptions;
     private static readonly Lazy<FileService> Lazy = new(() => new FileService());
@@ -34,7 +35,11 @@ public class FileService
         if (!File.Exists(path))
             return default;
 
-        var json = File.ReadAllText(path);
+        string json;
+        lock (_lock)
+        {
+            json = File.ReadAllText(path);
+        }
 
         return JsonSerializer.Deserialize<T>(json, _jsonDeserializerOptions);
     }
@@ -46,7 +51,10 @@ public class FileService
             Directory.CreateDirectory(folderPath);
         }
 
-        File.WriteAllText(Path.Combine(folderPath, filePath), fileContent, Encoding.UTF8);
+        lock (_lock)
+        {
+            File.WriteAllText(Path.Combine(folderPath, filePath), fileContent, Encoding.UTF8);
+        }
     }
 
     public void Save<T>(string folderPath, string filePath, T content)
@@ -57,6 +65,9 @@ public class FileService
         }
 
         var fileContent = JsonSerializer.Serialize(content, _jsonSerializerOptions);
-        File.WriteAllText(Path.Combine(folderPath, filePath), fileContent, Encoding.UTF8);
+        lock (_lock)
+        {
+            File.WriteAllText(Path.Combine(folderPath, filePath), fileContent, Encoding.UTF8);
+        }
     }
 }
