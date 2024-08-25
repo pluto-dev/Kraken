@@ -64,9 +64,10 @@ public sealed partial class CustomColorPicker : UserControl
         Click?.Invoke(sender, color);
     }
 
-    private void UpdateRecentColor(SolidColorBrush brush)
+    private async void UpdateRecentColor(SolidColorBrush brush)
     {
-        var index = RecentColors.ToList().FindIndex(p => p == brush);
+        var color = brush.Color;
+        var index = RecentColors.ToList().FindIndex(p => p.Color.Equals(color));
 
         if (index != -1)
         {
