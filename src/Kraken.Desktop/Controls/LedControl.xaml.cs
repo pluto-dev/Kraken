@@ -332,6 +332,8 @@ public sealed partial class LedControl : UserControl, INotifyPropertyChanged
             options.AnimationSpeed?.ToLower(),
             options.Direction?.ToLower()
         );
+
+        await _storageService.SaveColorModeSettingsAsync(options, ChannelName.ToLower());
     }
 
     private async void LedControl_OnLoaded(object sender, RoutedEventArgs e)
