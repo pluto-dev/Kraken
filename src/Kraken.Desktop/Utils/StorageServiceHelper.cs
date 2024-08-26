@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Kraken.Desktop.Models;
 using Kraken.Desktop.Services;
-using Kraken.Desktop.Views;
 
 namespace Kraken.Desktop.Utils;
 

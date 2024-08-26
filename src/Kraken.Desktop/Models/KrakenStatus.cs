@@ -1,6 +1,5 @@
 ﻿using System.Text.Json.Serialization;
 using Kraken.Desktop.Converters;
-using Kraken.Desktop.Services;
 
 namespace Kraken.Desktop.Models;
 
