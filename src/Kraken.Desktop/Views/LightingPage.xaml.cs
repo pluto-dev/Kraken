@@ -5,6 +5,7 @@ using System.Globalization;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using Kraken.Desktop.Controls;
+using Kraken.Desktop.Models;
 using Kraken.Desktop.Services;
 using Kraken.Desktop.Utils;
 using Microsoft.UI.Xaml;

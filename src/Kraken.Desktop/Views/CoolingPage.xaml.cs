@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using Kraken.Desktop.Models;
 using Kraken.Desktop.Services;
 using LiveChartsCore;
 using LiveChartsCore.Defaults;
