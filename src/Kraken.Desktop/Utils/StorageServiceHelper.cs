@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text.Encodings.Web;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Kraken.Desktop.Models;
 using Kraken.Desktop.Services;
@@ -61,38 +64,51 @@ public static class StorageServiceHelper
         );
     }
 
-    public static async Task<byte[][]> ReadRecentColors(this StorageService storage)
+    public static async Task<int[][]> ReadRecentColors(this StorageService storage)
     {
-        var recentColorsBase64 = await storage.ReadSettingAsync<string>(
-            StorageService.RecentColorsKey
-        );
+        var recentColors = await storage.ReadSettingAsync<int[][]>(StorageService.RecentColorsKey);
 
-        if (recentColorsBase64 is null)
+        if (recentColors is null)
         {
             throw new InvalidOperationException("Couldn't retrieve setting");
         }
 
-        return Util.UnBaseifyColorsArray(recentColorsBase64);
+        return recentColors;
     }
 
-    public static async Task<byte[][]> ReadFixedColors(this StorageService storage)
+    public static async Task<int[][]> ReadFixedColors(this StorageService storage)
     {
-        var fixedColorsBase64 = await storage.ReadSettingAsync<string>(
-            StorageService.FixedColorsKey
-        );
+        var fixedColors = await storage.ReadSettingAsync<int[][]>(StorageService.FixedColorsKey);
 
-        if (fixedColorsBase64 is null)
+        if (fixedColors is null)
         {
             throw new InvalidOperationException("Couldn't retrieve setting");
         }
 
-        return Util.UnBaseifyColorsArray(fixedColorsBase64);
+        return fixedColors;
     }
 
-    public static async Task SaveRecentColors(this StorageService storage, byte[][] recentColors)
+    public static async Task SaveRecentColors(this StorageService storage, int[][] recentColors)
     {
-        var baseifiedArray = Util.BaseifyColorsArray(recentColors);
+        await storage.SaveSettingAsync(StorageService.RecentColorsKey, recentColors);
+    }
 
-        await storage.SaveSettingAsync(StorageService.RecentColorsKey, baseifiedArray);
+    public static async Task SavePumpValues(
+        this StorageService storage,
+        int? krakenDeviceId,
+        string pump,
+        (int, int)[] values
+    )
+    {
+        throw new NotImplementedException();
+        //var aas = values.Select(x => new).ToArray()
+
+        //var s = JsonSerializer.Serialize(
+        //    values.ToDictionary(),
+        //    new JsonSerializerOptions { Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping }
+        //);
+        //var sa = JsonSerializer.Serialize(s);
+        //var d = JsonSerializer.Deserialize<Dictionary<string, int>>(s);
+        //await storage.SaveSettingAsync("pumpSpeed", values.ToDictionary());
     }
 }

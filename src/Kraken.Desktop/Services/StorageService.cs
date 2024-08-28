@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Kraken.Desktop.Utils;
 
@@ -12,13 +12,6 @@ public class StorageService
 {
     private StorageService()
     {
-        _jsonDeserializerOptions = new() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
-        _jsonSerializerOptions = new()
-        {
-            WriteIndented = true,
-            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-        };
         _fileService = FileService.Instance;
 
         var localApplicationData = Environment.GetFolderPath(
@@ -26,13 +19,11 @@ public class StorageService
         );
         ApplicationDataFolder = Path.Combine(localApplicationData, DefaultApplicationDataFolder);
         _settings = new Dictionary<string, object>();
-        InitializeAsync();
+        Initialize();
     }
 
     private bool _isInitialized;
     private static readonly Lazy<StorageService> Lazy = new(() => new StorageService());
-    private readonly JsonSerializerOptions _jsonDeserializerOptions;
-    private readonly JsonSerializerOptions _jsonSerializerOptions;
     private readonly FileService _fileService;
     private IDictionary<string, object> _settings;
 
@@ -49,30 +40,31 @@ public class StorageService
 
     public async Task<T?> ReadSettingAsync<T>(string key)
     {
-        if (_settings.TryGetValue(key, out var obj))
-        {
-            var str = Convert.ToString(obj);
+        if (!_settings.TryGetValue(key, out var value))
+            return await Task.FromResult<T?>(default);
 
-            return await Task.Run(
-                () => JsonSerializer.Deserialize<T>(str!, _jsonDeserializerOptions)
-            );
-        }
+        var valueString = Convert.ToString(value);
 
-        return default;
+        if (valueString is null)
+            return await Task.FromResult<T?>(default);
+
+        var tObject = await Task.Run(() => JsonSerializer.Deserialize<T>(valueString));
+
+        return await Task.FromResult(tObject);
     }
 
     public async Task SaveSettingAsync<T>(string key, T content)
     {
-        _settings[key] = await Task.Run(
-            () => JsonSerializer.Serialize(content, _jsonSerializerOptions)
-        );
+        Debug.Assert(content != null, nameof(content) + " != null");
+
+        _settings[key] = JsonSerializer.Serialize(content);
 
         await Task.Run(
             () => _fileService.Save(ApplicationDataFolder, DefaultSettingsFile, _settings)
         );
     }
 
-    private void InitializeAsync()
+    private void Initialize()
     {
         if (_isInitialized)
             return;
@@ -111,19 +103,13 @@ public class StorageService
         {
             const string defaultValue = "fixed";
 
-            _settings[SelectedLogoModeKey] = JsonSerializer.Serialize(
-                defaultValue,
-                _jsonSerializerOptions
-            );
-            _settings[SelectedRingModeKey] = JsonSerializer.Serialize(
-                defaultValue,
-                _jsonSerializerOptions
-            );
+            _settings[SelectedLogoModeKey] = JsonSerializer.Serialize(defaultValue);
+            _settings[SelectedRingModeKey] = JsonSerializer.Serialize(defaultValue);
         }
 
         if (!_settings.TryGetValue(FixedColorsKey, out _))
         {
-            var fixedColorsArray = new byte[][]
+            var fixedColorsArray = new int[][]
             {
                 [255, 196, 0, 255],
                 [255, 50, 0, 255],
@@ -141,13 +127,12 @@ public class StorageService
                 [255, 0, 0, 0]
             };
 
-            var base64 = Util.BaseifyColorsArray(fixedColorsArray);
-            _settings[FixedColorsKey] = JsonSerializer.Serialize(base64, _jsonSerializerOptions);
+            _settings[FixedColorsKey] = JsonSerializer.Serialize(fixedColorsArray);
         }
 
         if (!_settings.TryGetValue(RecentColorsKey, out _))
         {
-            var recentColorsArray = new byte[][]
+            var recentColorsArray = new int[][]
             {
                 [255, 255, 0, 0],
                 [255, 0, 0, 255],
@@ -155,9 +140,7 @@ public class StorageService
                 [255, 255, 0, 255],
                 [255, 255, 255, 0],
             };
-
-            var base64 = Util.BaseifyColorsArray(recentColorsArray);
-            _settings[RecentColorsKey] = JsonSerializer.Serialize(base64, _jsonSerializerOptions);
+            _settings[RecentColorsKey] = JsonSerializer.Serialize(recentColorsArray);
         }
 
         _fileService.Save(ApplicationDataFolder, DefaultSettingsFile, _settings);

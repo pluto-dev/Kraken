@@ -1,6 +1,6 @@
 ﻿using System;
 using System.IO;
-using System.Text;
+using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -14,6 +14,7 @@ public class FileService
         _jsonSerializerOptions = new()
         {
             WriteIndented = true,
+            Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
             DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase
         };
@@ -51,7 +52,7 @@ public class FileService
 
         lock (_lock)
         {
-            File.WriteAllText(Path.Combine(folderPath, filePath), fileContent, Encoding.UTF8);
+            File.WriteAllText(Path.Combine(folderPath, filePath), fileContent);
         }
     }
 
@@ -65,7 +66,7 @@ public class FileService
         var fileContent = JsonSerializer.Serialize(content, _jsonSerializerOptions);
         lock (_lock)
         {
-            File.WriteAllText(Path.Combine(folderPath, filePath), fileContent, Encoding.UTF8);
+            File.WriteAllText(Path.Combine(folderPath, filePath), fileContent);
         }
     }
 }

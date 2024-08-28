@@ -84,7 +84,7 @@ public sealed partial class CustomColorPicker : UserControl
     private async Task SaveRecentColors()
     {
         var recentColors = RecentColors
-            .Select(p => new[] { p.Color.A, p.Color.R, p.Color.G, p.Color.B })
+            .Select(p => new int[] { p.Color.A, p.Color.R, p.Color.G, p.Color.B })
             .ToArray();
 
         await _storageService.SaveRecentColors(recentColors);

@@ -341,7 +341,12 @@ public sealed partial class LedControl : UserControl, INotifyPropertyChanged
         {
             FixColors.Add(
                 new SolidColorBrush(
-                    Color.FromArgb(fixedColor[0], fixedColor[1], fixedColor[2], fixedColor[3])
+                    Color.FromArgb(
+                        (byte)fixedColor[0],
+                        (byte)fixedColor[1],
+                        (byte)fixedColor[2],
+                        (byte)fixedColor[3]
+                    )
                 )
             );
         }
@@ -350,7 +355,12 @@ public sealed partial class LedControl : UserControl, INotifyPropertyChanged
         {
             RecentColors.Add(
                 new SolidColorBrush(
-                    Color.FromArgb(recentColor[0], recentColor[1], recentColor[2], recentColor[3])
+                    Color.FromArgb(
+                        (byte)recentColor[0],
+                        (byte)recentColor[1],
+                        (byte)recentColor[2],
+                        (byte)recentColor[3]
+                    )
                 )
             );
         }
