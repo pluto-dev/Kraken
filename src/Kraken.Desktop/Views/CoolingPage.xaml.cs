@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Kraken.Desktop.Models;
 using Kraken.Desktop.Services;
+using Kraken.Desktop.Utils;
 using LiveChartsCore;
 using LiveChartsCore.Defaults;
 using LiveChartsCore.Drawing;
@@ -29,6 +30,7 @@ public sealed partial class CoolingPage : Page
         InitializeComponent();
         DataContext = this;
         _krakenService = KrakenService.Instance;
+        _storageService = StorageService.Instance;
         Series.Add(_lineSeries);
         Sections.Add(_liquidSection);
         Sections.Add(_rpmSection);
@@ -39,6 +41,7 @@ public sealed partial class CoolingPage : Page
     #region members
 
     private readonly KrakenService _krakenService;
+    private readonly StorageService _storageService;
     private KrakenDevice? _krakenDevice;
     private ChartPoint? _currentChartPoint;
 
@@ -181,13 +184,16 @@ public sealed partial class CoolingPage : Page
         _currentChartPoint = null;
         var pump = _krakenDevice?.SpeedChannels.Keys.FirstOrDefault(x => x.Contains("pump"));
         Debug.Assert(pump is not null, "pump can't be null");
-        var values = _lineSeries.Values?.Select(value =>
-        {
-            Debug.Assert(value.X is not null, "value.X in values in line series can't be null");
-            Debug.Assert(value.Y is not null, "value.Y in values in line series can't be null");
-            return ((int)value.X, (int)value.Y);
-        });
+        var values = _lineSeries
+            .Values?.Select(value =>
+            {
+                Debug.Assert(value.X is not null, "value.X in values in line series can't be null");
+                Debug.Assert(value.Y is not null, "value.Y in values in line series can't be null");
+                return ((int)value.X, (int)value.Y);
+            })
+            .ToArray();
         Debug.Assert(values is not null, "the values in line series can't be null");
+        await _storageService.SavePumpValues(_krakenDevice?.Id, pump, values);
         await _krakenService.SetSpeedProfile(_krakenDevice?.Id, pump, values);
     }
 
