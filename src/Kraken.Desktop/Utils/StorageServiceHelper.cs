@@ -97,4 +97,19 @@ public static class StorageServiceHelper
         this StorageService storage,
         IDictionary<int, int> values
     ) => await storage.SaveSettingAsync(StorageService.CustomPumpSpeedKey, values);
+
+    public static async Task<(int X, int Y)[]> ReadCustomPumpValues(this StorageService storage)
+    {
+        var pumpValues = await storage.ReadSettingAsync<IDictionary<int, int>>(
+            StorageService.CustomPumpSpeedKey
+        );
+
+        //TODO return default values. see nzxt cam
+        //if (pumpValues is null)
+        //{
+        //    return ;
+        //}
+
+        return pumpValues.Select(x => (x.Key, x.Value)).ToArray();
+    }
 }

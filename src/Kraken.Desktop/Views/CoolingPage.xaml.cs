@@ -52,18 +52,19 @@ public sealed partial class CoolingPage : Page
     private readonly LineSeries<ObservablePoint> _lineSeries =
         new()
         {
-            Values = new List<ObservablePoint>()
-            {
-                new(20, 60),
-                new(25, 60),
-                new(30, 60),
-                new(35, 60),
-                new(40, 60),
-                new(45, 60),
-                new(50, 60),
-                new(55, 60),
-                new(60, 60),
-            },
+            //Values = new List<ObservablePoint>()
+            //{
+            //    new(20, 60),
+            //    new(25, 60),
+            //    new(30, 60),
+            //    new(35, 60),
+            //    new(40, 60),
+            //    new(45, 60),
+            //    new(50, 60),
+            //    new(55, 60),
+            //    new(60, 60),
+            //},
+            Values = [],
             Fill = null,
             LineSmoothness = 0,
             GeometrySize = 20,
@@ -251,6 +252,8 @@ public sealed partial class CoolingPage : Page
         var init = await _krakenService.InitializeKraken(_krakenDevice?.Id);
         if (init is null)
             return;
+        var customPumpValues = await _storageService.ReadCustomPumpValues();
+        _lineSeries.Values = customPumpValues.Select(x => new ObservablePoint(x.X, x.Y)).ToList();
         _timer.Start();
     }
 
