@@ -24,6 +24,18 @@ namespace Kraken.Desktop.Views;
 
 public sealed partial class CoolingPage : Page
 {
+    public CoolingPage()
+    {
+        InitializeComponent();
+        DataContext = this;
+        _krakenService = KrakenService.Instance;
+        Series.Add(_lineSeries);
+        Sections.Add(_liquidSection);
+        Sections.Add(_rpmSection);
+        _timer.Tick += TimerOnTick;
+        _timer.Interval = TimeSpan.FromMilliseconds(1000);
+    }
+
     #region members
 
     private readonly KrakenService _krakenService;
@@ -92,18 +104,6 @@ public sealed partial class CoolingPage : Page
         };
 
     #endregion
-
-    public CoolingPage()
-    {
-        InitializeComponent();
-        DataContext = this;
-        _krakenService = KrakenService.Instance;
-        Series.Add(_lineSeries);
-        Sections.Add(_liquidSection);
-        Sections.Add(_rpmSection);
-        _timer.Tick += TimerOnTick;
-        _timer.Interval = TimeSpan.FromMilliseconds(1000);
-    }
 
     #region properties
     private SolidColorPaint TooltipTextPaint { get; } =
