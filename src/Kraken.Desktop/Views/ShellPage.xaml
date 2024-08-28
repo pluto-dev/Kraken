@@ -75,7 +75,9 @@
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
             </NavigationView.MenuItems>
-            <Frame x:Name="ContentFrame" Padding="36,0,36,36" />
+            <ScrollViewer>
+                <Frame x:Name="ContentFrame" Padding="36,0,36,36" />
+            </ScrollViewer>
         </NavigationView>
     </Grid>
 </Page>
