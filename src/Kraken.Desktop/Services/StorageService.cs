@@ -32,6 +32,7 @@ public class StorageService
     public const string DefaultSettingsFile = "KrakenSettings.json";
     public const string SelectedRingModeKey = "selectedRingMode";
     public const string SelectedLogoModeKey = "selectedLogoMode";
+    public const string CustomPumpSpeedKey = "customPumpSpeed";
     public const string FixedColorsKey = "fixedColors";
     public const string RecentColorsKey = "recentColors";
 

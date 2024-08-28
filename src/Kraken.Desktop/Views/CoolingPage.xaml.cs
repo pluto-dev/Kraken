@@ -193,7 +193,7 @@ public sealed partial class CoolingPage : Page
             })
             .ToArray();
         Debug.Assert(values is not null, "the values in line series can't be null");
-        await _storageService.SavePumpValues(_krakenDevice?.Id, pump, values);
+        await _storageService.SavePumpValues(values.ToDictionary(x => x.Item1, x => x.Item2));
         await _krakenService.SetSpeedProfile(_krakenDevice?.Id, pump, values);
     }
 

@@ -95,20 +95,6 @@ public static class StorageServiceHelper
 
     public static async Task SavePumpValues(
         this StorageService storage,
-        int? krakenDeviceId,
-        string pump,
-        (int, int)[] values
-    )
-    {
-        throw new NotImplementedException();
-        //var aas = values.Select(x => new).ToArray()
-
-        //var s = JsonSerializer.Serialize(
-        //    values.ToDictionary(),
-        //    new JsonSerializerOptions { Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping }
-        //);
-        //var sa = JsonSerializer.Serialize(s);
-        //var d = JsonSerializer.Deserialize<Dictionary<string, int>>(s);
-        //await storage.SaveSettingAsync("pumpSpeed", values.ToDictionary());
-    }
+        IDictionary<int, int> values
+    ) => await storage.SaveSettingAsync(StorageService.CustomPumpSpeedKey, values);
 }
