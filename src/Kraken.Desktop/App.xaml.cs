@@ -1,4 +1,5 @@
 ﻿using System;
+using Kraken.Desktop.Utils;
 using Kraken.Desktop.Views;
 using Microsoft.UI.Xaml;
 using WinUIEx;
@@ -12,8 +13,10 @@ public partial class App : Application
         InitializeComponent();
     }
 
-    protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
+    protected override async void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
     {
+        await Util.InitializeAsync();
+
         if (MainWindow.Content is not null)
         {
             throw new InvalidOperationException($"Content of {nameof(MainWindow)} must be null.");

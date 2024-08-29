@@ -40,12 +40,7 @@ public sealed partial class LightingPage : Page, INotifyPropertyChanged
 
     private async void LightingPage_OnLoaded(object sender, RoutedEventArgs e)
     {
-        var devices = await _krakenService.GetDevices();
-
-        _krakenDevice = devices?.FirstOrDefault(x => x is { ProductId: 8199, VendorId: 7793 });
-
-        if (_krakenDevice is null)
-            return;
+        _krakenDevice = await _krakenService.GetDeviceAsync(8199, 7793);
 
         KrakenDeviceName = _krakenDevice.Description;
 

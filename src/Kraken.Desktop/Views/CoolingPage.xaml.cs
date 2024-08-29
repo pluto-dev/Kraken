@@ -245,14 +245,10 @@ public sealed partial class CoolingPage : Page
 
     private async void CoolingPage_OnLoaded(object sender, RoutedEventArgs e)
     {
-        var krakenDevices = await _krakenService.GetDevices();
-        _krakenDevice = krakenDevices?.FirstOrDefault(x =>
-            x is { ProductId: 8199, VendorId: 7793 }
-        );
-        var init = await _krakenService.InitializeKraken(_krakenDevice?.Id);
-        if (init is null)
-            return;
+        _krakenDevice = await _krakenService.GetDeviceAsync(8199, 7793);
+
         var customPumpValues = await _storageService.ReadCustomPumpValues();
+
         _lineSeries.Values = customPumpValues.Select(x => new ObservablePoint(x.X, x.Y)).ToList();
         _timer.Start();
     }
