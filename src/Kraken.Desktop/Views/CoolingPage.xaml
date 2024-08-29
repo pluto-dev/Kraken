@@ -69,7 +69,7 @@
                         <TextBlock
                             Margin="16,4,0,0"
                             Style="{StaticResource TitleTextBlockStyle}"
-                            Text="32˚" />
+                            Text="{x:Bind LiquidTemperature, Mode=OneWay}" />
                     </StackPanel>
                 </Border>
             </StackPanel>

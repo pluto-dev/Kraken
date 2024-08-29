@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Kraken.Desktop.Models;
 using Kraken.Desktop.Services;
@@ -23,7 +25,7 @@ using Windows.System;
 
 namespace Kraken.Desktop.Views;
 
-public sealed partial class CoolingPage : Page
+public sealed partial class CoolingPage : Page, INotifyPropertyChanged
 {
     public CoolingPage()
     {
@@ -107,7 +109,11 @@ public sealed partial class CoolingPage : Page
             }
         };
 
+    private string _liquidTemperature = string.Empty;
+
     #endregion
+
+    public event PropertyChangedEventHandler? PropertyChanged;
 
     #region properties
     private SolidColorPaint TooltipTextPaint { get; } =
@@ -148,6 +154,16 @@ public sealed partial class CoolingPage : Page
             }
         ];
 
+    public string LiquidTemperature
+    {
+        get => _liquidTemperature;
+        set
+        {
+            _liquidTemperature = value;
+            OnPropertyChanged();
+        }
+    }
+
     #endregion
 
     private async void TimerOnTick(DispatcherQueueTimer sender, object args)
@@ -164,6 +180,7 @@ public sealed partial class CoolingPage : Page
         _liquidSection.Xi = temp;
         _liquidSection.Xj = temp;
         _liquidSection.Label = $"Liquid {temp}˚";
+        LiquidTemperature = $"{temp}˚";
 
         _rpmSection.Yi = duty;
         _rpmSection.Yj = duty;
@@ -257,5 +274,10 @@ public sealed partial class CoolingPage : Page
     {
         _timer.Stop();
         _timer.Tick -= TimerOnTick;
+    }
+
+    private void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }
